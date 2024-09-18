@@ -54,46 +54,52 @@ function inverseMat(m){
 }
 
 function idMat4() {
-  // Create Identity matrix
-  // TODO
-  var m = new THREE.Matrix4();
-  return m;
+    // Create Identity matrix
+    // TODO (check)
+    var m = new THREE.Matrix4();
+    m.set = ( 1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1 )
+    // console.log(m)
+    return m;
 }
 
 function translateMat(matrix, x, y, z) {
-  // Apply translation [x, y, z] to @matrix
-  // matrix: THREE.Matrix4
-  // x, y, z: float
+    // Apply translation [x, y, z] to @matrix
+    // matrix: THREE.Matrix4
+    // x, y, z: float
 
-  // TODO
-  var m = new THREE.Matrix4();
-  return m;
+    // TODO
+    var m = new THREE.Matrix4();
+
+    return m;
 }
 
 function rotateMat(matrix, angle, axis){
-  // Apply rotation by @angle with respect to @axis to @matrix
-  // matrix: THREE.Matrix3
-  // angle: float
-  // axis: string "x", "y" or "z"
+    // Apply rotation by @angle with respect to @axis to @matrix
+    // matrix: THREE.Matrix3
+    // angle: float
+    // axis: string "x", "y" or "z"
   
-  // TODO
+    // TODO
 }
 
 function rotateVec3(v, angle, axis){
-  // Apply rotation by @angle with respect to @axis to vector @v
-  // v: THREE.Vector3
-  // angle: float
-  // axis: string "x", "y" or "z"
+    // Apply rotation by @angle with respect to @axis to vector @v
+    // v: THREE.Vector3
+    // angle: float
+    // axis: string "x", "y" or "z"
   
-  // TODO
+    // TODO
 }
 
 function rescaleMat(matrix, x, y, z){
-  // Apply scaling @x, @y and @z to @matrix
-  // matrix: THREE.Matrix3
-  // x, y, z: float
-  
-  // TODO
+    // Apply scaling @x, @y and @z to @matrix
+    // matrix: THREE.Matrix3
+    // x, y, z: float
+
+    // TODO
 }
 
 class Robot {
