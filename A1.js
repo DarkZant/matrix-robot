@@ -79,18 +79,18 @@ function translateMat(matrix, x, y, z) {
         0, 0, 1, z,
         0, 0, 0, 1
     )
-    return m.multiply(matrix);
+    return multMat(m, matrix);
 }
 
 function rotateMat(matrix, angle, axis){
     // Apply rotation by @angle with respect to @axis to @matrix
-    // matrix: THREE.Matrix3
+    // matrix: THREE.Matrix4
     // angle: float
     // axis: string "x", "y" or "z"
   
     // TODO (Check)
 
-    return getRotationMatrix(angle, axis).multiply(matrix);
+    return multMat(getRotationMatrix(angle, axis), matrix);
 }
 
 function rotateVec3(v, angle, axis){
@@ -98,37 +98,40 @@ function rotateVec3(v, angle, axis){
     // v: THREE.Vector3
     // angle: float
     // axis: string "x", "y" or "z"
-  
+
     // TODO (Check)
 
-    return getRotationMatrix(angle, axis).multiply(v);
+    return v.applyMatrix4(getRotationMatrix(angle, axis));
 }
 
-//Retourne une matrice 3x3 de rotation selon un angle et un axe
+//Retourne une THREE.Matrix4 de rotation selon un angle et un axe
 function getRotationMatrix(angle, axis) {
-    var rotateMat = THREE.Matrix3();
+    var rotateMat = THREE.Matrix4();
     switch(axis) {
         case "x": {
             rotateMat.set(
-                1, 0, 0,
-                0, Math.cos(angle), -Math.sin(angle),
-                0, Math.sin(angle), Math.cos(angle),
+                1, 0, 0, 0,
+                0, Math.cos(angle), -Math.sin(angle), 0,
+                0, Math.sin(angle), Math.cos(angle), 0,
+                0, 0, 0, 1
             );
             break;
         }
         case "y": {
             rotateMat.set(
-                Math.cos(angle), 0, Math.sin(angle),
-                0, 1, 0,
-                -Math.sin(angle), 0, Math.cos(angle),
+                Math.cos(angle), 0, Math.sin(angle), 0,
+                0, 1, 0, 0,
+                -Math.sin(angle), 0, Math.cos(angle), 0,
+                0, 0, 0, 1
             );
             break;
         }
         case "z": {
             rotateMat.set(
-                Math.cos(angle), -Math.sin(angle), 0,
-                Math.sin(angle), Math.cos(angle), 0,
-                0, 0, 1,
+                Math.cos(angle), -Math.sin(angle), 0, 0,
+                Math.sin(angle), Math.cos(angle), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
             );
             break;
         }
@@ -138,18 +141,19 @@ function getRotationMatrix(angle, axis) {
 
 function rescaleMat(matrix, x, y, z){
     // Apply scaling @x, @y and @z to @matrix
-    // matrix: THREE.Matrix3
+    // matrix: THREE.Matrix4
     // x, y, z: float
 
     // TODO (Check)
-    var scaleMat = THREE.Matrix3();
+    var scaleMat = THREE.Matrix4();
     scaleMat.set(
-        x, 0, 0,
-        0, y, 0,
-        0, 0, z
+        x, 0, 0, 0,
+        0, y, 0, 0,
+        0, 0, z, 0,
+        0, 0, 0, 1
     )
 
-    return scaleMat.multiply(matrix);
+    return multMat(scaleMat, matrix);
 }
 
 class Robot {
