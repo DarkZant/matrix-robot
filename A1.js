@@ -57,10 +57,11 @@ function idMat4() {
     // Create Identity matrix
     // TODO (check)
     var m = new THREE.Matrix4();
-    m.set = ( 1, 0, 0, 0,
-              0, 1, 0, 0,
-              0, 0, 1, 0,
-              0, 0, 0, 1 )
+    // m.set = ( 1, 0, 0, 0,
+    //           0, 1, 0, 0,
+    //           0, 0, 1, 0,
+    //           0, 0, 0, 1
+    // )
     // console.log(m)
     return m;
 }
@@ -70,10 +71,15 @@ function translateMat(matrix, x, y, z) {
     // matrix: THREE.Matrix4
     // x, y, z: float
 
-    // TODO
+    // TODO (Check)
     var m = new THREE.Matrix4();
-
-    return m;
+    m.set(
+        1, 0, 0, x,
+        0, 1, 0, y,
+        0, 0, 1, z,
+        0, 0, 0, 1
+    )
+    return m.multiply(matrix);
 }
 
 function rotateMat(matrix, angle, axis){
@@ -82,7 +88,9 @@ function rotateMat(matrix, angle, axis){
     // angle: float
     // axis: string "x", "y" or "z"
   
-    // TODO
+    // TODO (Check)
+
+    return getRotationMatrix(angle, axis).multiply(matrix);
 }
 
 function rotateVec3(v, angle, axis){
@@ -91,7 +99,41 @@ function rotateVec3(v, angle, axis){
     // angle: float
     // axis: string "x", "y" or "z"
   
-    // TODO
+    // TODO (Check)
+
+    return getRotationMatrix(angle, axis).multiply(v);
+}
+
+//Retourne une matrice 3x3 de rotation selon un angle et un axe
+function getRotationMatrix(angle, axis) {
+    var rotateMat = THREE.Matrix3();
+    switch(axis) {
+        case "x": {
+            rotateMat.set(
+                1, 0, 0,
+                0, Math.cos(angle), -Math.sin(angle),
+                0, Math.sin(angle), Math.cos(angle),
+            );
+            break;
+        }
+        case "y": {
+            rotateMat.set(
+                Math.cos(angle), 0, Math.sin(angle),
+                0, 1, 0,
+                -Math.sin(angle), 0, Math.cos(angle),
+            );
+            break;
+        }
+        case "z": {
+            rotateMat.set(
+                Math.cos(angle), -Math.sin(angle), 0,
+                Math.sin(angle), Math.cos(angle), 0,
+                0, 0, 1,
+            );
+            break;
+        }
+    }
+    return rotateMat;
 }
 
 function rescaleMat(matrix, x, y, z){
@@ -99,7 +141,15 @@ function rescaleMat(matrix, x, y, z){
     // matrix: THREE.Matrix3
     // x, y, z: float
 
-    // TODO
+    // TODO (Check)
+    var scaleMat = THREE.Matrix3();
+    scaleMat.set(
+        x, 0, 0,
+        0, y, 0,
+        0, 0, z
+    )
+
+    return scaleMat.multiply(matrix);
 }
 
 class Robot {
@@ -324,7 +374,7 @@ function checkKeyboard() {
       // Add more cases
       // TODO
     }
-    }
+  }
 
     if (keyboard.pressed("f")) {
         isRightButtonDown = true;
