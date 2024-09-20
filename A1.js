@@ -253,7 +253,7 @@ class Robot {
         // TODO
 
         // Forearms transformations
-        this.forearmsInitialMatrix = this.initialForearmsMatrix();
+        // this.forearmsInitialMatrix = this.initialForearmsMatrix();
 
         // Add robot to scene
         scene.add(this.torso);
