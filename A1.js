@@ -153,70 +153,122 @@ function rescaleMat(matrix, x, y, z){
 }
 
 class Robot {
-  constructor() {
-    // Geometry
-    this.torsoHeight = 1.5;
-    this.torsoRadius = 0.75;
-    this.headRadius = 0.32;
-    // Add parameters for parts
-    // TODO
+    constructor() {
+        // Geometry
 
-    // Animation
-    this.walkDirection = new THREE.Vector3( 0, 0, 1 );
+        // Torso
+        this.torsoHeight = 1.5;
+        this.torsoRadius = 0.75;
 
-    // Material
-    this.material = new THREE.MeshNormalMaterial();
+        // Head
+        this.headRadius = 0.32;
+        // Add parameters for parts
+        // TODO (check)
 
-    // Initial pose
-    this.initialize()
-  }
+        // Forearms
+        this.forearmsHeight = 0.5;
+        this.forearmsRadius = 0.2;
 
-  initialTorsoMatrix(){
+        // Arms
+        this.armsHeight = 0.5;
+        this.armsRadius = 0.2;
+
+        // Thighs
+        this.thighsHeight = 0.6;
+        this.thighsRadius = 0.25;
+
+        // Legs
+        this.legsHeight = 0.6;
+        this.legsRadius = 0.25;
+
+        // Animation
+        this.walkDirection = new THREE.Vector3( 0, 0, 1 );
+
+        // Material
+        this.material = new THREE.MeshNormalMaterial();
+
+        // Initial pose
+        this.initialize()
+    }
+
+    initialTorsoMatrix(){
     var initialTorsoMatrix = idMat4();
     initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoHeight/2, 0);
 
     return initialTorsoMatrix;
-  }
+    }
 
-  initialHeadMatrix(){
+    initialHeadMatrix(){
     var initialHeadMatrix = idMat4();
     initialHeadMatrix = translateMat(initialHeadMatrix, 0, this.torsoHeight/2 + this.headRadius, 0);
 
     return initialHeadMatrix;
-  }
+    }
 
-  initialize() {
-    // Torso
-    var torsoGeometry = new THREE.CubeGeometry(2*this.torsoRadius, this.torsoHeight, this.torsoRadius, 64);
-    this.torso = new THREE.Mesh(torsoGeometry, this.material);
+    initialize() {
+        // Torso
+        var torsoGeometry = new THREE.CubeGeometry(2*this.torsoRadius, this.torsoHeight, this.torsoRadius, 64);
+        this.torso = new THREE.Mesh(torsoGeometry, this.material);
 
-    // Head
-    var headGeometry = new THREE.CubeGeometry(2*this.headRadius, this.headRadius, this.headRadius);
-    this.head = new THREE.Mesh(headGeometry, this.material);
+        // Head
+        var headGeometry = new THREE.CubeGeometry(2*this.headRadius, this.headRadius, this.headRadius);
+        this.head = new THREE.Mesh(headGeometry, this.material);
 
-    // Add parts
-    // TODO
+        // Add parts
+        // TODO (check)
 
-    // Torse transformation
-    this.torsoInitialMatrix = this.initialTorsoMatrix();
-    this.torsoMatrix = idMat4();
-    this.torso.setMatrix(this.torsoInitialMatrix);
+        // Forearms
+        var forearmsGeometry = new THREE.SphereGeometry(this.forearmsRadius)
+        this.leftForearm = new THREE.Mesh(forearmsGeometry, this.material);
+        this.rightForearm = new THREE.Mesh(forearmsGeometry, this.material);
 
-    // Head transformation
-    this.headInitialMatrix = this.initialHeadMatrix();
-    this.headMatrix = idMat4();
-    var matrix = multMat(this.torsoInitialMatrix, this.headInitialMatrix);
-    this.head.setMatrix(matrix);
+        // Arms
+        var armsGeometry = new THREE.SphereGeometry(this.armsRadius)
+        this.leftArm = new THREE.Mesh(armsGeometry, this.material);
+        this.rightArm = new THREE.Mesh(armsGeometry, this.material);
 
-    // Add transformations
-    // TODO
+        // Thighs
+        var thighsGeometry = new THREE.SphereGeometry(this.thighsRadius)
+        this.leftThigh = new THREE.Mesh(thighsGeometry, this.material);
+        this.rightThigh = new THREE.Mesh(thighsGeometry, this.material);
 
-	// Add robot to scene
-	scene.add(this.torso);
-    scene.add(this.head);
-    // Add parts
-    // TODO
-  }
+        // Legs
+        var legsGeometry = new THREE.SphereGeometry(this.legsRadius)
+        this.leftLeg = new THREE.Mesh(legsGeometry, this.material);
+        this.rightLeg = new THREE.Mesh(legsGeometry, this.material);
+
+
+        // Torse transformation
+        this.torsoInitialMatrix = this.initialTorsoMatrix();
+        this.torsoMatrix = idMat4();
+        this.torso.setMatrix(this.torsoInitialMatrix);
+
+        // Head transformation
+        this.headInitialMatrix = this.initialHeadMatrix();
+        this.headMatrix = idMat4();
+        var matrix = multMat(this.torsoInitialMatrix, this.headInitialMatrix);
+        this.head.setMatrix(matrix);
+
+        // Add transformations
+        // TODO
+
+        // Forearms transformations
+        this.forearmsInitialMatrix = this.initialForearmsMatrix();
+
+        // Add robot to scene
+        scene.add(this.torso);
+        scene.add(this.head);
+        // Add parts
+        // TODO (check)
+        scene.add(this.leftForearm);
+        scene.add(this.rightForearm);
+        scene.add(this.leftArm);
+        scene.add(this.rightArm);
+        scene.add(this.leftThigh);
+        scene.add(this.rightThigh);
+        scene.add(this.leftLeg);
+        scene.add(this.rightLeg);
+    }
 
   rotateTorso(angle){
     var torsoMatrix = this.torsoMatrix;
@@ -275,10 +327,18 @@ var keyboard = new THREEx.KeyboardState();
 
 var selectedRobotComponent = 0;
 var components = [
-  "Torso",
-  "Head",
-  // Add parts names
-  // TODO
+    "Torso",
+    "Head",
+    // Add parts names
+    // TODO (check)
+    "LeftForearm",
+    "RightForearm",
+    "LeftArm",
+    "RightArm",
+    "LeftThigh",
+    "RightThigh",
+    "LeftLeg",
+    "RightLeg"
 ];
 var numberComponents = components.length;
 
