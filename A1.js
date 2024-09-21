@@ -175,19 +175,18 @@ class Robot {
         this.armsRadius = 0.2;
         this.armsHeight = this.armsScaleY * this.armsRadius * 2;
 
-        // Forearms
-        this.forearmsScaleY = 2.5;
+        // // Forearms
+        this.forearmsScaleY = 2.25;
         this.forearmsRadius = 0.175;
-        this.forearmsHeight = this.forearmsScaleY * this.forearmsRadius * 2;
 
         // Thighs
-        this.thighsScaleY = 2.65;
+        this.thighsScaleY = 2.55;
         this.thighsRadius = 0.25;
         this.thighsHeight = this.thighsScaleY * this.thighsRadius * 2;
 
         // Legs
         this.legsScaleY = 2.5;
-        this.legsRadius = 0.2;
+        this.legsRadius = 0.22;
         this.legsHeight = this.legsScaleY * this.legsRadius * 2;
 
         // Animation
@@ -202,14 +201,14 @@ class Robot {
 
     initialTorsoMatrix(){
         var initialTorsoMatrix = idMat4();
-        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.legsHeight + this.thighsHeight + this.torsoHeight/2 - this.overlapConst*2, 0);
+        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoRadius + this.legsHeight + this.thighsHeight - this.overlapConst, 0);
 
         return initialTorsoMatrix;
     }
 
     initialHeadMatrix(){
         var initialHeadMatrix = idMat4();
-        initialHeadMatrix = translateMat(initialHeadMatrix, 0, this.torsoHeight/2 + this.headRadius, 0);
+        initialHeadMatrix = translateMat(initialHeadMatrix, 0, this.torsoRadius + this.headRadius, 0);
 
         return initialHeadMatrix;
     }
@@ -217,17 +216,17 @@ class Robot {
     initialArmsMatrix(isRightSide){
         var initialArmsMatrix = idMat4();
         var scaleMatrix = rescaleMat(initialArmsMatrix, 1, this.armsScaleY, 1)
-        var translateMatrix = translateMat(initialArmsMatrix, (isRightSide? 1:-1)*(this.torsoHeight/2 + this.armsRadius), this.legsHeight + this.thighsHeight + this.torsoHeight/2 - this.overlapConst, 0);
+        var translateMatrix = translateMat(initialArmsMatrix, (isRightSide? 1:-1)*(this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
         initialArmsMatrix = multMat(translateMatrix, scaleMatrix)
 
         return initialArmsMatrix;
     }
 
     initialForearmsMatrix(isRightSide){
-        var initialForearmsMatrix = idMat4();
-        var scaleMatrix = rescaleMat(initialForearmsMatrix, 1, this.forearmsScaleY, 1)
-        var translateMatrix = translateMat(initialForearmsMatrix, (isRightSide? 1:-1)*(this.torsoHeight/2 + this.forearmsRadius), this.legsHeight + this.thighsHeight + this.torsoHeight/2 - this.overlapConst*2 - this.armsHeight/2, 0);
-        initialForearmsMatrix = multMat(translateMatrix, scaleMatrix)
+         var initialForearmsMatrix = idMat4();
+         var scaleMatrix = rescaleMat(initialForearmsMatrix, 1, this.forearmsScaleY, 1)
+         var translateMatrix = translateMat(initialForearmsMatrix, (isRightSide? 1:-1)*(this.torsoRadius + this.armsRadius), this.torsoRadius/2 - this.armsHeight + this.overlapConst, 0);
+         initialForearmsMatrix = multMat(translateMatrix, scaleMatrix)
 
         return initialForearmsMatrix;
     }
@@ -235,7 +234,7 @@ class Robot {
     initialThighsMatrix(isRightSide){
         var initialThighsMatrix = idMat4();
         var scaleMatrix = rescaleMat(initialThighsMatrix, 1, this.thighsScaleY, 1)
-        var translateMatrix = translateMat(initialThighsMatrix, (isRightSide? 1:-1)*(this.torsoHeight/6 + this.thighsRadius), this.legsHeight + this.thighsHeight/2 - this.overlapConst, 0);
+        var translateMatrix = translateMat(initialThighsMatrix, (isRightSide? 1:-1)*(this.torsoRadius/4 + this.thighsRadius), -this.torsoHeight + this.overlapConst, 0);
         initialThighsMatrix = multMat(translateMatrix, scaleMatrix)
 
         return initialThighsMatrix;
@@ -244,7 +243,7 @@ class Robot {
     initialLegsMatrix(isRightSide){
         var initialLegsMatrix = idMat4();
         var scaleMatrix = rescaleMat(initialLegsMatrix, 1, this.legsScaleY, 1)
-        var translateMatrix = translateMat(initialLegsMatrix, (isRightSide? 1:-1)*(this.torsoHeight/6 + this.legsRadius), this.legsHeight/2, 0);
+        var translateMatrix = translateMat(initialLegsMatrix, (isRightSide? 1:-1)*(this.torsoRadius/4 + this.thighsRadius), -this.torsoHeight - this.thighsHeight/2 - this.overlapConst, 0);
         initialLegsMatrix = multMat(translateMatrix, scaleMatrix)
 
         return initialLegsMatrix;
@@ -252,7 +251,7 @@ class Robot {
 
     initialize() {
         // Torso
-        var torsoGeometry = new THREE.CubeGeometry(2*this.torsoRadius, this.torsoHeight, this.torsoRadius, 64);
+        var torsoGeometry = new THREE.CubeGeometry(this.torsoHeight, this.torsoHeight, this.torsoRadius, 64);
         this.torso = new THREE.Mesh(torsoGeometry, this.material);
 
         // Head
@@ -293,8 +292,7 @@ class Robot {
         // Head transformation
         this.headInitialMatrix = this.initialHeadMatrix();
         this.headMatrix = idMat4();
-        var matrix = multMat(this.torsoInitialMatrix, this.headInitialMatrix);
-        this.head.setMatrix(matrix);
+        this.head.setMatrix(multMat(this.torsoInitialMatrix, this.headInitialMatrix));
 
         // Add transformations
         // TODO
@@ -302,26 +300,34 @@ class Robot {
         // Arms transformations
         this.rightArmInitialMatrix = this.initialArmsMatrix(true);
         this.leftArmInitialMatrix = this.initialArmsMatrix(false);
-        this.rightArm.setMatrix(this.rightArmInitialMatrix);
-        this.leftArm.setMatrix(this.leftArmInitialMatrix);
+        this.leftArmMatrix = idMat4();
+        this.rightArmMatrix = idMat4();
+        this.rightArm.setMatrix(multMat(this.torsoInitialMatrix, this.rightArmInitialMatrix));
+        this.leftArm.setMatrix(multMat(this.torsoInitialMatrix, this.leftArmInitialMatrix));
 
         // Forearms transformations
         this.rightForearmInitialMatrix = this.initialForearmsMatrix(true);
         this.leftForearmInitialMatrix = this.initialForearmsMatrix(false);
-        this.rightForearm.setMatrix(this.rightForearmInitialMatrix);
-        this.leftForearm.setMatrix(this.leftForearmInitialMatrix);
+        this.leftForearmMatrix = idMat4();
+        this.rightForearmMatrix = idMat4();
+        this.rightForearm.setMatrix(multMat(this.torsoInitialMatrix, this.rightForearmInitialMatrix));
+        this.leftForearm.setMatrix(multMat(this.torsoInitialMatrix, this.leftForearmInitialMatrix));
 
         // Thighs transformations
         this.rightThighInitialMatrix = this.initialThighsMatrix(true);
         this.leftThighInitialMatrix = this.initialThighsMatrix(false);
-        this.rightThigh.setMatrix(this.rightThighInitialMatrix);
-        this.leftThigh.setMatrix(this.leftThighInitialMatrix);
+        this.leftThighMatrix = idMat4();
+        this.rightThighMatrix = idMat4();
+        this.rightThigh.setMatrix(multMat(this.torsoInitialMatrix, this.rightThighInitialMatrix));
+        this.leftThigh.setMatrix(multMat(this.torsoInitialMatrix, this.leftThighInitialMatrix));
 
         // Legs transformations
         this.rightLegInitialMatrix = this.initialLegsMatrix(true);
         this.leftLegInitialMatrix = this.initialLegsMatrix(false);
-        this.rightLeg.setMatrix(this.rightLegInitialMatrix);
-        this.leftLeg.setMatrix(this.leftLegInitialMatrix);
+        this.leftForearmMatrix = idMat4();
+        this.rightForearmMatrix = idMat4();
+        this.rightLeg.setMatrix(multMat(this.torsoInitialMatrix, this.rightLegInitialMatrix));
+        this.leftLeg.setMatrix(multMat(this.torsoInitialMatrix, this.leftLegInitialMatrix));
 
 
 
