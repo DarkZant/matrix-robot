@@ -159,7 +159,7 @@ class Robot {
     constructor() {
         // Geometry
 
-        this.overlapConst = 0.2
+        this.overlapConst = 0.2 // Constante pour "overlap" les articulations des jambes et des bras
 
         // Torso
         this.torsoHeight = 1.5;
