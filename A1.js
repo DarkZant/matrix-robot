@@ -375,7 +375,7 @@ class Robot {
         matrix = multMat(matrix, matrix2);
         this.head.setMatrix(matrix);
 
-        this.moveAllWithTorso();
+        // this.moveAllWithTorso();
 
 
     }
@@ -407,75 +407,158 @@ class Robot {
   // Add methods for other parts
   // TODO
 
-    rotateRightArm(angle, axis) {
-        if (axis === 'x') {
-            let newAngle = this.rightArmXAngle + angle;
-            if (newAngle < this.armMinAngleX ||  newAngle > this.armMaxAngleX)
-                return;
-            this.rightArmXAngle = newAngle;
+    rotateArm(isLeft, angle, axis) {
+
+        if(isLeft) {
+
+            if (axis === 'x') {
+                let newAngle = this.leftArmXAngle + angle;
+                if (newAngle < this.armMinAngleX || newAngle > this.armMaxAngleX)
+                    return;
+                this.leftArmXAngle = newAngle;
+            }
+            if (axis === 'z') {
+                let newAngle = this.leftArmZAngle + angle;
+                if (newAngle > this.armMinAngleZ || newAngle < -this.armMaxAngleZ)
+                    return;
+                this.leftArmZAngle = newAngle;
+            }
+
+            var oldLAMatrix = this.leftArmMatrix;
+
+            this.leftArmMatrix = idMat4();
+
+            if (axis === "x") {
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, 0, -this.armsHeight * 3 / 4, 0);
+                this.leftArmMatrix = rotateMat(this.leftArmMatrix, angle, axis);
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, 0, this.armsHeight * 3 / 4, 0);
+            } else if (axis === "z") {
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, this.torsoRadius + this.armsRadius, -this.armsHeight * 3 / 4, 0);
+                this.leftArmMatrix = rotateMat(this.leftArmMatrix, angle, axis);
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, -this.torsoRadius - this.armsRadius, this.armsHeight * 3 / 4, 0);
+            }
+            this.leftArmMatrix = multMat(oldLAMatrix, this.leftArmMatrix)
+
+            // Rotate and position Left Arm
+            let leftArmMatrix = multMat(this.leftArmMatrix, this.leftArmInitialMatrix);
+            let torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix)
+            this.leftArm.setMatrix(multMat(torsoMatrix, leftArmMatrix));
+
+            // Rotate and position Left Forearm
+            let leftArmMatrixT = multMat(this.leftArmMatrix, this.leftArmInitialTMatrix);
+            leftArmMatrixT = multMat(torsoMatrix, leftArmMatrixT);
+
+            let leftForearmMatrix = multMat(this.leftForearmMatrix, this.forearmInitialMatrix);
+            leftForearmMatrix = multMat(leftArmMatrixT, leftForearmMatrix);
+
+            this.leftForearm.setMatrix(leftForearmMatrix);
+
+
+        } else{
+
+                if (axis === 'x') {
+                    let newAngle = this.rightArmXAngle + angle;
+                    if (newAngle < this.armMinAngleX ||  newAngle > this.armMaxAngleX)
+                        return;
+                    this.rightArmXAngle = newAngle;
+                }
+                if (axis === 'z') {
+                    let newAngle = this.rightArmZAngle + angle;
+                    if (newAngle < this.armMinAngleZ ||  newAngle > this.armMaxAngleZ)
+                        return;
+                    this.rightArmZAngle = newAngle;
+                }
+
+
+                var oldRAMatrix = this.rightArmMatrix;
+
+                this.rightArmMatrix = idMat4();
+                if (axis === "x") {
+                    this.rightArmMatrix = translateMat(this.rightArmMatrix, 0, -this.armsHeight * 3/4, 0);
+                    this.rightArmMatrix = rotateMat(this.rightArmMatrix, angle, axis);
+                    this.rightArmMatrix = translateMat(this.rightArmMatrix, 0, this.armsHeight * 3/4, 0);
+                }
+                else if (axis === "z") {
+                    this.rightArmMatrix = translateMat(this.rightArmMatrix, -this.torsoRadius - this.armsRadius, -this.armsHeight * 3/4, 0);
+                    this.rightArmMatrix = rotateMat(this.rightArmMatrix, angle, axis);
+                    this.rightArmMatrix = translateMat(this.rightArmMatrix, this.torsoRadius + this.armsRadius, this.armsHeight * 3/4, 0);
+                }
+                this.rightArmMatrix = multMat(oldRAMatrix, this.rightArmMatrix)
+
+                // Rotate and position Right Arm
+                var rightArmMatrix = multMat(this.rightArmMatrix, this.rightArmInitialMatrix);
+                var torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix)
+                this.rightArm.setMatrix(multMat(torsoMatrix, rightArmMatrix));
+
+                // Rotate and position Right Forearm
+                var rightArmMatrixT = multMat(this.rightArmMatrix, this.rightArmInitialTMatrix);
+                rightArmMatrixT = multMat(torsoMatrix, rightArmMatrixT);
+
+                var rightForearmMatrix = multMat(this.rightForearmMatrix, this.forearmInitialMatrix);
+                rightForearmMatrix = multMat(rightArmMatrixT, rightForearmMatrix);
+
+                this.rightForearm.setMatrix(rightForearmMatrix);
         }
-        if (axis === 'z') {
-            let newAngle = this.rightArmZAngle + angle;
-            if (newAngle < this.armMinAngleZ ||  newAngle > this.armMaxAngleZ)
-                return;
-            this.rightArmZAngle = newAngle;
-        }
-
-
-        var oldRAMatrix = this.rightArmMatrix;
-
-        this.rightArmMatrix = idMat4();
-        if (axis === "x") {
-            this.rightArmMatrix = translateMat(this.rightArmMatrix, 0, -this.armsHeight * 3/4, 0);
-            this.rightArmMatrix = rotateMat(this.rightArmMatrix, angle, axis);
-            this.rightArmMatrix = translateMat(this.rightArmMatrix, 0, this.armsHeight * 3/4, 0);
-        }
-        else if (axis === "z") {
-            this.rightArmMatrix = translateMat(this.rightArmMatrix, -this.torsoRadius - this.armsRadius, -this.armsHeight * 3/4, 0);
-            this.rightArmMatrix = rotateMat(this.rightArmMatrix, angle, axis);
-            this.rightArmMatrix = translateMat(this.rightArmMatrix, this.torsoRadius + this.armsRadius, this.armsHeight * 3/4, 0);
-        }
-        this.rightArmMatrix = multMat(oldRAMatrix, this.rightArmMatrix)
-
-        var matrix = multMat(this.rightArmMatrix, this.rightArmInitialMatrix);
-        matrix = multMat(this.torsoMatrix, matrix);
-        matrix = multMat(this.torsoInitialMatrix, matrix);
-
-        this.rightArm.setMatrix(matrix);
-
-        matrix = multMat(this.rightArmMatrix, this.rightArmInitialTMatrix);
-        matrix = multMat(this.torsoMatrix, matrix);
-        matrix = multMat(this.torsoInitialMatrix, matrix);
-        matrix = multMat(this.rightForearmMatrix, matrix);
-        matrix = multMat(matrix, this.forearmInitialMatrix);
-
-        this.rightForearm.setMatrix(matrix);
-
-
-
     }
 
-    rotateRightForearm(angle) {
-        var newAngle = this.rightForearmAngle + angle;
-        if (newAngle < this.forearmMinAngle ||  newAngle > this.forearmMaxAngle)
-            return;
-        this.rightForearmAngle = newAngle;
-
-        var oldRFMatrix = this.rightForearmMatrix;
-
-        this.rightForearmMatrix = idMat4();
-        this.rightForearmMatrix = translateMat(this.rightForearmMatrix, 0, this.forearmsHeight / 2, 0);
-        this.rightForearmMatrix = rotateMat(this.rightForearmMatrix, angle, "x");
-        this.rightForearmMatrix = translateMat(this.rightForearmMatrix, 0, -this.forearmsHeight / 2, 0);
-        this.rightForearmMatrix = multMat(oldRFMatrix, this.rightForearmMatrix)
 
 
-        var matrix = multMat(this.torsoMatrix, this.rightForearmMatrix);
-        matrix = multMat(this.torsoInitialMatrix, matrix);
-        matrix = multMat(this.rightArmMatrix, matrix);
-        matrix = multMat(this.rightArmInitialTMatrix, matrix);
+    rotateForearm(isLeft, angle) {
 
-        this.rightForearm.setMatrix(matrix);
+        if(isLeft){
+
+            var newAngle = this.leftForearmAngle + angle;
+            if (newAngle < this.forearmMinAngle ||  newAngle > this.forearmMaxAngle)
+                return;
+            this.leftForearmAngle = newAngle;
+
+            var oldRFMatrix = this.leftForearmMatrix;
+
+            this.leftForearmMatrix = idMat4();
+            this.leftForearmMatrix = translateMat(this.leftForearmMatrix, 0, this.forearmsHeight / 2, 0);
+            this.leftForearmMatrix = rotateMat(this.leftForearmMatrix, angle, "x");
+            this.leftForearmMatrix = translateMat(this.leftForearmMatrix, 0, -this.forearmsHeight / 2, 0);
+            this.leftForearmMatrix = multMat(oldRFMatrix, this.leftForearmMatrix)
+
+            // Rotate and position Left Forearm
+            var leftForearmMatrix = multMat(this.leftForearmMatrix, this.forearmInitialMatrix)
+
+            var torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix)
+            var leftArmMatrix = multMat(this.leftArmMatrix, this.leftArmInitialTMatrix)
+
+            var translateMatrix = multMat(torsoMatrix, leftArmMatrix);
+
+            leftForearmMatrix = multMat(translateMatrix, leftForearmMatrix);
+
+            this.leftForearm.setMatrix(leftForearmMatrix);
+
+        }
+        else {
+                var newAngle = this.rightForearmAngle + angle;
+                if (newAngle < this.forearmMinAngle ||  newAngle > this.forearmMaxAngle)
+                    return;
+                this.rightForearmAngle = newAngle;
+
+                var oldRFMatrix = this.rightForearmMatrix;
+
+                this.rightForearmMatrix = idMat4();
+                this.rightForearmMatrix = translateMat(this.rightForearmMatrix, 0, this.forearmsHeight / 2, 0);
+                this.rightForearmMatrix = rotateMat(this.rightForearmMatrix, angle, "x");
+                this.rightForearmMatrix = translateMat(this.rightForearmMatrix, 0, -this.forearmsHeight / 2, 0);
+                this.rightForearmMatrix = multMat(oldRFMatrix, this.rightForearmMatrix)
+
+                // Rotate and position Right Forearm
+                var rightForearmMatrix = multMat(this.rightForearmMatrix, this.forearmInitialMatrix)
+
+                var torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix)
+                var rightArmMatrix = multMat(this.rightArmMatrix, this.rightArmInitialTMatrix)
+
+                var translateMatrix = multMat(torsoMatrix, rightArmMatrix);
+
+                rightForearmMatrix = multMat(translateMatrix, rightForearmMatrix);
+
+                this.rightForearm.setMatrix(rightForearmMatrix);
+        }
     }
 
   look_at(point){
@@ -558,12 +641,20 @@ function checkKeyboard() {
             // Add more cases
             // TODO
 
+            case "LeftForearm":
+                robot.rotateForearm(true, -0.05)
+                break;
+
             case "RightForearm":
-                robot.rotateRightForearm(-0.05)
+                robot.rotateForearm(false, -0.05)
+                break;
+
+            case "LeftArm":
+                robot.rotateArm(true, -0.05, 'x')
                 break;
 
             case "RightArm":
-                robot.rotateRightArm(-0.05, 'x')
+                robot.rotateArm(false, -0.05, 'x')
                 break;
         }
     }
@@ -579,12 +670,20 @@ function checkKeyboard() {
       // Add more cases
       // TODO
 
+        case "LeftForearm":
+            robot.rotateForearm(true, 0.05)
+            break;
+
         case "RightForearm":
-            robot.rotateRightForearm(0.05);
+            robot.rotateForearm(false, 0.05);
+            break;
+
+        case "LeftArm":
+            robot.rotateArm(true, 0.05, 'x')
             break;
 
         case "RightArm":
-            robot.rotateRightArm(0.05, 'x')
+            robot.rotateArm(false, 0.05, 'x')
             break;
     }
   }
@@ -601,8 +700,12 @@ function checkKeyboard() {
       // Add more cases
       // TODO
 
+        case "LeftArm":
+            robot.rotateArm(true, -0.05, 'z')
+            break;
+
         case "RightArm":
-            robot.rotateRightArm(-0.05, 'z')
+            robot.rotateArm(false, -0.05, 'z')
             break;
     }
   }
@@ -619,8 +722,12 @@ function checkKeyboard() {
       // Add more cases
       // TODO
 
+        case "LeftArm":
+            robot.rotateArm(true, 0.05, 'z')
+            break;
+
         case "RightArm":
-            robot.rotateRightArm(0.05, 'z')
+            robot.rotateArm(false, 0.05, 'z')
             break;
     }
   }
