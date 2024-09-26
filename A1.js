@@ -213,7 +213,7 @@ class Robot {
 
     initialTorsoMatrix(){
         var initialTorsoMatrix = idMat4();
-        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoRadius + this.legsHeight + this.thighsHeight - this.overlapConst * 1.75, 0);
+        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoRadius + this.legsHeight + this.thighsHeight - this.overlapConst * 1.9, 0);
 
         return initialTorsoMatrix;
     }
@@ -409,8 +409,6 @@ class Robot {
         this.head.setMatrix(matrix);
 
         // WALK ANIMATION
-
-
         if(speed > 0){ // Robot marche vers l'avant
 
             if(this.leftArmXAngle < this.walkArmMinAngleX){
