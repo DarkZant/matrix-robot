@@ -190,7 +190,7 @@ class Robot {
         this.thighsScaleY = 2.55;
         this.thighsRadius = 0.25;
         this.thighsHeight = this.thighsScaleY * this.thighsRadius * 2;
-        this.thighMaxAngle = 0;
+        this.thighMaxAngle = 0.79;
         this.thighMinAngle = -0.79;
 
         // Legs
