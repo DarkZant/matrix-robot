@@ -158,7 +158,6 @@ function rescaleMat(matrix, x, y, z){
 class Robot {
     constructor() {
         // Geometry
-
         this.overlapConst = 0.2 // Constante pour "overlap" les articulations des jambes et des bras
 
         // Torso
@@ -174,10 +173,12 @@ class Robot {
         this.armsScaleY = 2.25;
         this.armsRadius = 0.2;
         this.armsHeight = this.armsScaleY * this.armsRadius * 2;
-        this.armMaxAngleX = 0;
+        this.armMaxAngleX = 1.18;
         this.armMaxAngleZ = 2.5;
         this.armMinAngleX = -2.5;
+        this.walkArmMinAngleX = -1.18;
         this.armMinAngleZ = 0;
+        this.hasReachedMax = false;
 
         // Forearms
         this.forearmsScaleY = 2.5;
@@ -197,7 +198,7 @@ class Robot {
         this.legsScaleY = 2.5;
         this.legsRadius = 0.22;
         this.legsHeight = this.legsScaleY * this.legsRadius * 2;
-        this.legMaxAngle = 2.5;
+        this.legMaxAngle = 2;
         this.legMinAngle = 0;
 
         // Animation
@@ -271,7 +272,7 @@ class Robot {
         this.head.setMatrix(multMat(this.torsoInitialMatrix, this.headInitialMatrix));
 
         // Add transformations
-        // TODO
+        // TODO (check)
 
         // Arms transformations
         this.leftArmInitialTMatrix = translateMat(idMat4(), -(this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
@@ -360,6 +361,43 @@ class Robot {
 
     }
 
+    forwardAnimation(){
+        // Thighs animation
+        this.rotateThigh(true, 0.075)
+        this.rotateThigh(false, -0.075)
+
+        // Legs animation
+        this.rotateLeg(true, 0.075)
+        this.rotateLeg(false, -0.075)
+
+        // Arms animation
+        this.rotateArm(true, -0.1, "x")
+        this.rotateArm(false, 0.1, "x")
+
+        // Forearms animation
+        this.rotateForearm(true, -0.075)
+        this.rotateForearm(false, 0.075)
+    }
+
+    backwardAnimation(){
+        // Thighs animation
+        this.rotateThigh(true, -0.075)
+        this.rotateThigh(false, 0.075)
+
+        // Legs animation
+        this.rotateLeg(true, -0.075)
+        this.rotateLeg(false, 0.075)
+
+        // Arms animation
+        this.rotateArm(true, 0.1, "x")
+        this.rotateArm(false, -0.1, "x")
+
+        // Forearms animation
+        this.rotateForearm(true, 0.075)
+        this.rotateForearm(false, -0.075)
+    }
+
+
     moveTorso(speed){
         this.torsoMatrix = translateMat(this.torsoMatrix, speed * this.walkDirection.x, speed * this.walkDirection.y, speed * this.walkDirection.z);
 
@@ -369,6 +407,43 @@ class Robot {
         var matrix2 = multMat(this.headMatrix, this.headInitialMatrix);
         matrix = multMat(matrix, matrix2);
         this.head.setMatrix(matrix);
+
+        // WALK ANIMATION
+
+
+        if(speed > 0){ // Robot marche vers l'avant
+
+            if(this.leftArmXAngle < this.walkArmMinAngleX){
+                this.hasReachedMax = true
+            }
+
+            if(this.leftArmXAngle >= this.armMaxAngleX - 0.1){
+                this.hasReachedMax = false
+            }
+
+            if(!this.hasReachedMax){
+                this.forwardAnimation()
+            } else{
+                this.backwardAnimation()
+            }
+
+        } else{ // Robot marche vers l'arrière
+
+            if(this.leftArmXAngle < this.walkArmMinAngleX){
+                this.hasReachedMax = false
+            }
+
+            if(this.leftArmXAngle >= this.armMaxAngleX - 0.1){
+                this.hasReachedMax = true
+            }
+
+            if(this.hasReachedMax){
+                this.forwardAnimation()
+            } else{
+                this.backwardAnimation()
+            }
+
+        }
 
         this.moveAllWithTorso();
     }
@@ -426,7 +501,7 @@ class Robot {
   }
 
   // Add methods for other parts
-  // TODO
+  // TODO (check)
 
     rotateArm(isLeft, angle, axis) {
         if(isLeft) {
@@ -777,7 +852,7 @@ function checkKeyboard() {
                 break;
 
             // Add more cases
-            // TODO
+            // TODO (check)
 
             case "LeftForearm":
                 robot.rotateForearm(true, -0.05)
@@ -822,7 +897,7 @@ function checkKeyboard() {
       case "Head":
         break;
       // Add more cases
-      // TODO
+      // TODO (check)
 
         case "LeftForearm":
             robot.rotateForearm(true, 0.05);
@@ -868,7 +943,7 @@ function checkKeyboard() {
         robot.rotateHead(0.1);
         break;
       // Add more cases
-      // TODO
+      // TODO (check)
 
         case "LeftArm":
             robot.rotateArm(true, -0.05, 'z')
@@ -890,7 +965,7 @@ function checkKeyboard() {
         robot.rotateHead(-0.1);
         break;
       // Add more cases
-      // TODO
+      // TODO(check)
 
         case "LeftArm":
             robot.rotateArm(true, 0.05, 'z')
