@@ -339,6 +339,7 @@ class Robot {
         scene.add(this.rightThigh);
         scene.add(this.leftLeg);
         scene.add(this.rightLeg);
+
     }
 
     rotateTorso(angle){
@@ -363,38 +364,85 @@ class Robot {
 
     forwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, 0.075)
-        this.rotateThigh(false, -0.075)
+        this.rotateThigh(true, 0.07)
+        this.rotateThigh(false, -0.07)
 
         // Legs animation
-        this.rotateLeg(true, 0.075)
-        this.rotateLeg(false, -0.075)
+        this.rotateLeg(true, 0.07)
+        this.rotateLeg(false, -0.07)
 
         // Arms animation
         this.rotateArm(true, -0.1, "x")
         this.rotateArm(false, 0.1, "x")
 
         // Forearms animation
-        this.rotateForearm(true, -0.075)
-        this.rotateForearm(false, 0.075)
+        this.rotateForearm(true, -0.07)
+        this.rotateForearm(false, 0.07)
     }
 
     backwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, -0.075)
-        this.rotateThigh(false, 0.075)
+        this.rotateThigh(true, -0.07)
+        this.rotateThigh(false, 0.07)
 
         // Legs animation
-        this.rotateLeg(true, -0.075)
-        this.rotateLeg(false, 0.075)
+        this.rotateLeg(true, -0.07)
+        this.rotateLeg(false, 0.07)
 
         // Arms animation
         this.rotateArm(true, 0.1, "x")
         this.rotateArm(false, -0.1, "x")
 
         // Forearms animation
-        this.rotateForearm(true, 0.075)
-        this.rotateForearm(false, -0.075)
+        this.rotateForearm(true, 0.07)
+        this.rotateForearm(false, -0.07)
+    }
+
+    updateGroundTouch(){
+        var torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
+
+        var leftLegMatrix = multMat(this.leftLegMatrix, this.legInitialMatrix);
+        var leftThighMatrix = multMat(this.leftThighMatrix, this.leftThighInitialTMatrix);
+        var leftLegPosMatrix = multMat(torsoMatrix, leftThighMatrix);
+        leftLegPosMatrix = multMat(leftLegPosMatrix, leftLegMatrix);
+
+        var rightLegMatrix = multMat(this.rightLegMatrix, this.legInitialMatrix);
+        var rightThighMatrix = multMat(this.rightThighMatrix, this.rightThighInitialTMatrix);
+        var rightLegPosMatrix = multMat(torsoMatrix, rightThighMatrix);
+        rightLegPosMatrix = multMat(rightLegPosMatrix, rightLegMatrix);
+
+        var leftLegPosY = leftLegPosMatrix.elements[13];
+        var rightLegPosY = rightLegPosMatrix.elements[13];
+
+        console.log("left thigh : " + this.leftThighAngle + ";    Right thigh : " + this.rightThighAngle);
+        console.log("left leg : " + this.leftLegAngle + " ;     right leg : " + this.rightLegAngle);
+
+        var supportLegPosY = Math.min(leftLegPosY, rightLegPosY);
+
+        if(this.leftThighAngle > 0.75 || this.rightThighAngle > 0.75){
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.7, 0);
+            console.log("in5")
+        } else if(this.leftThighAngle > 0.7 || this.rightThighAngle > 0.7){
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
+            console.log("in4")
+        } else if(this.leftThighAngle > 0.63 || this.rightThighAngle > 0.65){
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.4, 0);
+            console.log("in3")
+        } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7) {
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
+            console.log("in2")
+        } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7){
+            console.log("in1")
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.4, 0);
+
+        } else{
+            console.log("inelse")
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.1, 0);
+        }
+
+
+        var matrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
+        this.torso.setMatrix(matrix);
     }
 
 
@@ -421,8 +469,10 @@ class Robot {
 
             if(!this.hasReachedMax){
                 this.forwardAnimation()
+                this.updateGroundTouch()
             } else{
                 this.backwardAnimation()
+                this.updateGroundTouch()
             }
 
         } else{ // Robot marche vers l'arrière
@@ -437,8 +487,10 @@ class Robot {
 
             if(this.hasReachedMax){
                 this.forwardAnimation()
+                this.updateGroundTouch()
             } else{
                 this.backwardAnimation()
+                this.updateGroundTouch()
             }
 
         }
