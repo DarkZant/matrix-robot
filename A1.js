@@ -411,29 +411,21 @@ class Robot {
         var rightLegPosMatrix = multMat(torsoMatrix, rightThighMatrix);
         rightLegPosMatrix = multMat(rightLegPosMatrix, rightLegMatrix);
 
-        console.log(this.leftThighAngle + "   " + this.leftLegAngle + "   " + this.rightThighAngle + "   " + this.rightLegAngle)
-
         var leftLegPosY = leftLegPosMatrix.elements[13];
         var rightLegPosY = rightLegPosMatrix.elements[13];
 
-        var supportLegPosY = Math.min(leftLegPosY, rightLegPosY);
+        var leftLegOffsetY = this.legsHeight / 2 * Math.sin(this.leftLegAngle * this.leftThighAngle)
+        var rightLegOffsetY = this.legsHeight / 2 * Math.sin(this.rightLegAngle * this.rightThighAngle)
 
-        if(this.leftThighAngle > 0.75 || this.rightThighAngle > 0.75){
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.7, 0);
+        var leftLegBottomY = leftLegPosY - this.legsHeight / 2 + leftLegOffsetY
+        var rightLegBottomY = rightLegPosY - this.legsHeight / 2 + rightLegOffsetY
 
-        } else if(this.leftThighAngle > 0.7 || this.rightThighAngle > 0.7){
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.55, 0);
+        var supportLegPosY = Math.min(leftLegBottomY, rightLegBottomY);
 
-        } else if(this.leftThighAngle > 0.63 || this.rightThighAngle > 0.65) {
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight / 2 - this.overlapConst * 0.4, 0);
+        this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY - this.overlapConst * 0.25, 0);
 
-        } else{
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.15, 0);
-        }
-
-
-        var matrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
-        this.torso.setMatrix(matrix);
+        var finalTorsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
+        this.torso.setMatrix(finalTorsoMatrix);
     }
 
 
@@ -448,6 +440,7 @@ class Robot {
         this.head.setMatrix(matrix);
 
         // WALK ANIMATION
+
         if(speed > 0){ // Robot marche vers l'avant
 
             if(this.leftArmXAngle < this.walkArmMinAngleX){
