@@ -414,29 +414,24 @@ class Robot {
         var leftLegPosY = leftLegPosMatrix.elements[13];
         var rightLegPosY = rightLegPosMatrix.elements[13];
 
-        console.log("left thigh : " + this.leftThighAngle + ";    Right thigh : " + this.rightThighAngle);
-        console.log("left leg : " + this.leftLegAngle + " ;     right leg : " + this.rightLegAngle);
-
         var supportLegPosY = Math.min(leftLegPosY, rightLegPosY);
 
         if(this.leftThighAngle > 0.75 || this.rightThighAngle > 0.75){
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.7, 0);
-            console.log("in5")
+
         } else if(this.leftThighAngle > 0.7 || this.rightThighAngle > 0.7){
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
-            console.log("in4")
+
         } else if(this.leftThighAngle > 0.63 || this.rightThighAngle > 0.65){
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.4, 0);
-            console.log("in3")
+
         } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7) {
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
-            console.log("in2")
+
         } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7){
-            console.log("in1")
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.4, 0);
 
         } else{
-            console.log("inelse")
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.1, 0);
         }
 
