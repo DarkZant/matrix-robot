@@ -364,38 +364,38 @@ class Robot {
 
     forwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, 0.07)
-        this.rotateThigh(false, -0.07)
+        this.rotateThigh(true, 0.04)
+        this.rotateThigh(false, -0.04)
 
         // Legs animation
-        this.rotateLeg(true, 0.07)
-        this.rotateLeg(false, -0.07)
+        this.rotateLeg(true, 0.04)
+        this.rotateLeg(false, -0.04)
 
         // Arms animation
-        this.rotateArm(true, -0.1, "x")
-        this.rotateArm(false, 0.1, "x")
+        this.rotateArm(true, -0.08, "x")
+        this.rotateArm(false, 0.08, "x")
 
         // Forearms animation
-        this.rotateForearm(true, -0.07)
-        this.rotateForearm(false, 0.07)
+        this.rotateForearm(true, -0.04)
+        this.rotateForearm(false, 0.04)
     }
 
     backwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, -0.07)
-        this.rotateThigh(false, 0.07)
+        this.rotateThigh(true, -0.04)
+        this.rotateThigh(false, 0.04)
 
         // Legs animation
-        this.rotateLeg(true, -0.07)
-        this.rotateLeg(false, 0.07)
+        this.rotateLeg(true, -0.04)
+        this.rotateLeg(false, 0.04)
 
         // Arms animation
-        this.rotateArm(true, 0.1, "x")
-        this.rotateArm(false, -0.1, "x")
+        this.rotateArm(true, 0.08, "x")
+        this.rotateArm(false, -0.08, "x")
 
         // Forearms animation
-        this.rotateForearm(true, 0.07)
-        this.rotateForearm(false, -0.07)
+        this.rotateForearm(true, 0.04)
+        this.rotateForearm(false, -0.04)
     }
 
     updateGroundTouch(){
@@ -458,7 +458,7 @@ class Robot {
                 this.hasReachedMax = true
             }
 
-            if(this.leftArmXAngle >= this.armMaxAngleX - 0.1){
+            if(this.leftArmXAngle >= this.armMaxAngleX - 0.08){
                 this.hasReachedMax = false
             }
 
