@@ -364,38 +364,38 @@ class Robot {
 
     forwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, 0.04)
-        this.rotateThigh(false, -0.04)
+        this.rotateThigh(true, 0.035)
+        this.rotateThigh(false, -0.035)
 
         // Legs animation
-        this.rotateLeg(true, 0.04)
-        this.rotateLeg(false, -0.04)
+        this.rotateLeg(true, 0.035)
+        this.rotateLeg(false, -0.035)
 
         // Arms animation
-        this.rotateArm(true, -0.08, "x")
-        this.rotateArm(false, 0.08, "x")
+        this.rotateArm(true, -0.07, "x")
+        this.rotateArm(false, 0.07, "x")
 
         // Forearms animation
-        this.rotateForearm(true, -0.04)
-        this.rotateForearm(false, 0.04)
+        this.rotateForearm(true, -0.035)
+        this.rotateForearm(false, 0.035)
     }
 
     backwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, -0.04)
-        this.rotateThigh(false, 0.04)
+        this.rotateThigh(true, -0.035)
+        this.rotateThigh(false, 0.035)
 
         // Legs animation
-        this.rotateLeg(true, -0.04)
-        this.rotateLeg(false, 0.04)
+        this.rotateLeg(true, -0.035)
+        this.rotateLeg(false, 0.035)
 
         // Arms animation
-        this.rotateArm(true, 0.08, "x")
-        this.rotateArm(false, -0.08, "x")
+        this.rotateArm(true, 0.07, "x")
+        this.rotateArm(false, -0.07, "x")
 
         // Forearms animation
-        this.rotateForearm(true, 0.04)
-        this.rotateForearm(false, -0.04)
+        this.rotateForearm(true, 0.035)
+        this.rotateForearm(false, -0.035)
     }
 
     updateGroundTouch(){
@@ -411,6 +411,8 @@ class Robot {
         var rightLegPosMatrix = multMat(torsoMatrix, rightThighMatrix);
         rightLegPosMatrix = multMat(rightLegPosMatrix, rightLegMatrix);
 
+        console.log(this.leftThighAngle + "   " + this.leftLegAngle + "   " + this.rightThighAngle + "   " + this.rightLegAngle)
+
         var leftLegPosY = leftLegPosMatrix.elements[13];
         var rightLegPosY = rightLegPosMatrix.elements[13];
 
@@ -420,19 +422,13 @@ class Robot {
             this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.7, 0);
 
         } else if(this.leftThighAngle > 0.7 || this.rightThighAngle > 0.7){
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.55, 0);
 
-        } else if(this.leftThighAngle > 0.63 || this.rightThighAngle > 0.65){
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.4, 0);
-
-        } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7) {
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.5, 0);
-
-        } else if(-0.1 < this.leftThighAngle && this.rightThighAngle < 0.1 && this.leftLegAngle > 0.7 && this.rightLegAngle > 0.7){
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst*0.4, 0);
+        } else if(this.leftThighAngle > 0.63 || this.rightThighAngle > 0.65) {
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight / 2 - this.overlapConst * 0.4, 0);
 
         } else{
-            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.1, 0);
+            this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY + this.legsHeight/2 - this.overlapConst * 0.15, 0);
         }
 
 
@@ -458,7 +454,7 @@ class Robot {
                 this.hasReachedMax = true
             }
 
-            if(this.leftArmXAngle >= this.armMaxAngleX - 0.08){
+            if(this.leftArmXAngle >= this.armMaxAngleX - 0.07){
                 this.hasReachedMax = false
             }
 
