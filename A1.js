@@ -213,7 +213,7 @@ class Robot {
 
     initialTorsoMatrix(){
         var initialTorsoMatrix = idMat4();
-        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoRadius + this.legsHeight + this.thighsHeight - this.overlapConst * 1.9, 0);
+        initialTorsoMatrix = translateMat(initialTorsoMatrix, 0,this.torsoRadius + this.legsHeight + this.thighsHeight - this.overlapConst * 1.875, 0);
 
         return initialTorsoMatrix;
     }
@@ -301,8 +301,8 @@ class Robot {
         this.rightForearmAngle = 0;
 
         // Thighs transformations
-        this.leftThighInitialTMatrix =  translateMat(idMat4(), -(this.torsoRadius/4 + this.thighsRadius), -this.torsoHeight + this.overlapConst, 0);
-        this.rightThighInitialTMatrix = translateMat(idMat4(), this.torsoRadius/4 + this.thighsRadius, -this.torsoHeight + this.overlapConst, 0);
+        this.leftThighInitialTMatrix =  translateMat(idMat4(), this.torsoRadius/4 + this.thighsRadius, -this.torsoHeight + this.overlapConst, 0);
+        this.rightThighInitialTMatrix = translateMat(idMat4(), -(this.torsoRadius/4 + this.thighsRadius), -this.torsoHeight + this.overlapConst, 0);
         this.thighInitialSMatrix = rescaleMat(idMat4(), 1, this.thighsScaleY, 1);
         this.leftThighInitialMatrix = multMat(this.leftThighInitialTMatrix, this.thighInitialSMatrix);
         this.rightThighInitialMatrix = multMat(this.rightThighInitialTMatrix, this.thighInitialSMatrix);
@@ -352,10 +352,6 @@ class Robot {
         var matrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
         this.torso.setMatrix(matrix);
 
-        var matrix2 = multMat(this.headMatrix, this.headInitialMatrix);
-        matrix = multMat(matrix, matrix2);
-        this.head.setMatrix(matrix);
-
         this.walkDirection = rotateVec3(this.walkDirection, angle, "y");
 
         this.moveAllWithTorso();
@@ -364,38 +360,38 @@ class Robot {
 
     forwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, 0.035)
-        this.rotateThigh(false, -0.035)
+        this.rotateThigh(true, 0.03)
+        this.rotateThigh(false, -0.03)
 
         // Legs animation
-        this.rotateLeg(true, 0.035)
-        this.rotateLeg(false, -0.035)
+        this.rotateLeg(true, 0.03)
+        this.rotateLeg(false, -0.03)
 
         // Arms animation
-        this.rotateArm(true, -0.07, "x")
-        this.rotateArm(false, 0.07, "x")
+        this.rotateArm(true, -0.06, "x")
+        this.rotateArm(false, 0.06, "x")
 
         // Forearms animation
-        this.rotateForearm(true, -0.035)
-        this.rotateForearm(false, 0.035)
+        this.rotateForearm(true, -0.03)
+        this.rotateForearm(false, 0.03)
     }
 
     backwardAnimation(){
         // Thighs animation
-        this.rotateThigh(true, -0.035)
-        this.rotateThigh(false, 0.035)
+        this.rotateThigh(true, -0.03)
+        this.rotateThigh(false, 0.03)
 
         // Legs animation
-        this.rotateLeg(true, -0.035)
-        this.rotateLeg(false, 0.035)
+        this.rotateLeg(true, -0.03)
+        this.rotateLeg(false, 0.03)
 
         // Arms animation
-        this.rotateArm(true, 0.07, "x")
-        this.rotateArm(false, -0.07, "x")
+        this.rotateArm(true, 0.06, "x")
+        this.rotateArm(false, -0.06, "x")
 
         // Forearms animation
-        this.rotateForearm(true, 0.035)
-        this.rotateForearm(false, -0.035)
+        this.rotateForearm(true, 0.03)
+        this.rotateForearm(false, -0.03)
     }
 
     updateGroundTouch(){
@@ -403,26 +399,28 @@ class Robot {
 
         var leftLegMatrix = multMat(this.leftLegMatrix, this.legInitialMatrix);
         var leftThighMatrix = multMat(this.leftThighMatrix, this.leftThighInitialTMatrix);
-        var leftLegPosMatrix = multMat(torsoMatrix, leftThighMatrix);
-        leftLegPosMatrix = multMat(leftLegPosMatrix, leftLegMatrix);
+        var leftThighPosMatrix = multMat(torsoMatrix, leftThighMatrix);
+        var leftLegPosMatrix = multMat(leftThighPosMatrix, leftLegMatrix);
 
         var rightLegMatrix = multMat(this.rightLegMatrix, this.legInitialMatrix);
         var rightThighMatrix = multMat(this.rightThighMatrix, this.rightThighInitialTMatrix);
-        var rightLegPosMatrix = multMat(torsoMatrix, rightThighMatrix);
-        rightLegPosMatrix = multMat(rightLegPosMatrix, rightLegMatrix);
+        var rightThighPosMatrix = multMat(torsoMatrix, rightThighMatrix);
+        var rightLegPosMatrix = multMat(rightThighPosMatrix, rightLegMatrix);
 
         var leftLegPosY = leftLegPosMatrix.elements[13];
         var rightLegPosY = rightLegPosMatrix.elements[13];
 
-        var leftLegOffsetY = this.legsHeight / 2 * Math.sin(this.leftLegAngle * this.leftThighAngle)
-        var rightLegOffsetY = this.legsHeight / 2 * Math.sin(this.rightLegAngle * this.rightThighAngle)
+        let centerLeftLegGroundHyp = leftLegPosY / Math.cos(this.leftThighAngle + this.leftLegAngle);
+        let bottomLeftLegGroundHyp = centerLeftLegGroundHyp - this.legsHeight/2;
+        var bottomLeftLegPosY = Math.cos(this.leftThighAngle + this.leftLegAngle) * bottomLeftLegGroundHyp;
 
-        var leftLegBottomY = leftLegPosY - this.legsHeight / 2 + leftLegOffsetY
-        var rightLegBottomY = rightLegPosY - this.legsHeight / 2 + rightLegOffsetY
+        let centerRightLegGroundHyp = rightLegPosY / Math.cos(this.rightThighAngle + this.rightLegAngle);
+        let bottomRightLegGroundHyp = centerRightLegGroundHyp - this.legsHeight/2;
+        var bottomRightLegPosY = Math.cos(this.rightThighAngle + this.rightLegAngle) * bottomRightLegGroundHyp;
 
-        var supportLegPosY = Math.min(leftLegBottomY, rightLegBottomY);
+        let supportLegY = Math.min(bottomRightLegPosY, bottomLeftLegPosY)
 
-        this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegPosY - this.overlapConst * 0.25, 0);
+        this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegY + 0.01, 0);
 
         var finalTorsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
         this.torso.setMatrix(finalTorsoMatrix);
@@ -434,10 +432,6 @@ class Robot {
 
         var matrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
         this.torso.setMatrix(matrix);
-
-        var matrix2 = multMat(this.headMatrix, this.headInitialMatrix);
-        matrix = multMat(matrix, matrix2);
-        this.head.setMatrix(matrix);
 
         // WALK ANIMATION
 
@@ -484,6 +478,11 @@ class Robot {
 
     moveAllWithTorso() {
         var torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix)
+
+        // Head
+        var headMatrix = multMat(this.headMatrix, this.headInitialMatrix);
+        headMatrix = multMat(torsoMatrix, headMatrix);
+        this.head.setMatrix(headMatrix);
 
         // Left Arm and Forearm
         var leftArmMatrix = multMat(torsoMatrix, multMat(this.leftArmMatrix, this.leftArmInitialMatrix))
@@ -906,18 +905,26 @@ function checkKeyboard() {
 
             case "LeftThigh":
                 robot.rotateThigh(true, -0.05);
+                robot.updateGroundTouch();
+                robot.moveAllWithTorso();
                 break;
 
             case "RightThigh":
                 robot.rotateThigh(false, -0.05);
+                robot.updateGroundTouch();
+                robot.moveAllWithTorso();
                 break;
 
             case "LeftLeg":
                 robot.rotateLeg(true, -0.05);
+                robot.updateGroundTouch();
+                robot.moveAllWithTorso();
                 break;
 
             case "RightLeg":
                 robot.rotateLeg(false, -0.05);
+                robot.updateGroundTouch();
+                robot.moveAllWithTorso();
                 break;
         }
     }
@@ -951,18 +958,26 @@ function checkKeyboard() {
 
         case "LeftThigh":
             robot.rotateThigh(true, 0.05);
+            robot.updateGroundTouch();
+            robot.moveAllWithTorso();
             break;
 
         case "RightThigh":
             robot.rotateThigh(false, 0.05);
+            robot.updateGroundTouch();
+            robot.moveAllWithTorso();
             break;
 
         case "LeftLeg":
             robot.rotateLeg(true, 0.05);
+            robot.updateGroundTouch();
+            robot.moveAllWithTorso();
             break;
 
         case "RightLeg":
             robot.rotateLeg(false, 0.05);
+            robot.updateGroundTouch();
+            robot.moveAllWithTorso();
             break;
     }
   }
