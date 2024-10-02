@@ -809,7 +809,40 @@ class Robot {
 
   look_at(point){
     // Compute and apply the correct rotation of the head and the torso for the robot to look at @point
-      //TODO
+      let torsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
+      let headPosMatrix = multMat(torsoMatrix, this.headInitialMatrix);
+
+      // Coordonnées de positions de la tête
+      let hX = headPosMatrix.elements[12];
+      let hY = headPosMatrix.elements[13];
+      let hZ = headPosMatrix.elements[14];
+
+      // On calcule les angles
+      let deltaX = hX - point.x;
+      let deltaY = hY - point.y;
+      let deltaZ = hZ - point.z;
+      let deltaXZ = Math.sqrt(deltaX ** 2 + deltaZ ** 2);
+      let angleX = -Math.atan(deltaXZ / deltaY);
+      let angleY = Math.atan(deltaX / deltaZ) - (deltaZ > 0 ? Math.PI : 0);
+
+      //On ajoute un angle à la tête
+      let headRotMatrix = translateMat(idMat4(), 0, -this.headRadius - this.torsoRadius, 0)
+      headRotMatrix = rotateMat(headRotMatrix, angleX, "x");
+      headRotMatrix = translateMat(headRotMatrix, 0, this.headRadius + this.torsoRadius, 0)
+
+      this.headMatrix = headRotMatrix;
+
+      // On tourne le torse
+      let newTorsoMatrix = rotateMat(idMat4(), angleY, "y");
+      let torsoPosX = this.torsoMatrix.elements[12];
+      let torsoPosY = this.torsoMatrix.elements[13];
+      let torsoPosZ = this.torsoMatrix.elements[14];
+      newTorsoMatrix = translateMat(newTorsoMatrix, torsoPosX, torsoPosY, torsoPosZ);
+      this.torsoMatrix = newTorsoMatrix;
+      this.torso.setMatrix(multMat(newTorsoMatrix, this.torsoInitialMatrix));
+      this.walkDirection = rotateVec3(new THREE.Vector3( 0, 0, 1 ), angleY, "y");
+      this.moveAllWithTorso();
+
   }
 }
 
