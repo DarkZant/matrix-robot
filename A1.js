@@ -275,8 +275,8 @@ class Robot {
         // TODO (check)
 
         // Arms transformations
-        this.leftArmInitialTMatrix = translateMat(idMat4(), -(this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
-        this.rightArmInitialTMatrix = translateMat(idMat4(), (this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
+        this.leftArmInitialTMatrix = translateMat(idMat4(), (this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
+        this.rightArmInitialTMatrix = translateMat(idMat4(), -(this.torsoRadius + this.armsRadius), this.torsoRadius/2, 0);
         this.armInitialSMatrix = rescaleMat(idMat4(), 1, this.armsScaleY, 1);
         this.leftArmInitialMatrix = multMat(this.leftArmInitialTMatrix, this.armInitialSMatrix);
         this.rightArmInitialMatrix = multMat(this.rightArmInitialTMatrix, this.armInitialSMatrix);
@@ -420,6 +420,12 @@ class Robot {
 
         let supportLegY = Math.min(bottomRightLegPosY, bottomLeftLegPosY)
 
+        // Solution ground clipping
+        let torsoPosY = torsoMatrix.elements[13];
+        if (torsoPosY - supportLegY + 0.01 < 1.825)
+            return
+
+
         this.torsoMatrix = translateMat(this.torsoMatrix, 0, -supportLegY + 0.01, 0);
 
         var finalTorsoMatrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
@@ -546,7 +552,7 @@ class Robot {
             }
             if (axis === 'z') {
                 let newAngle = this.leftArmZAngle + angle;
-                if (newAngle > this.armMinAngleZ || newAngle < -this.armMaxAngleZ)
+                if (newAngle < this.armMinAngleZ || newAngle > this.armMaxAngleZ)
                     return;
                 this.leftArmZAngle = newAngle;
             }
@@ -560,9 +566,9 @@ class Robot {
                 this.leftArmMatrix = rotateMat(this.leftArmMatrix, angle, axis);
                 this.leftArmMatrix = translateMat(this.leftArmMatrix, 0, this.armsHeight * 3 / 4, 0);
             } else if (axis === "z") {
-                this.leftArmMatrix = translateMat(this.leftArmMatrix, this.torsoRadius + this.armsRadius, -this.armsHeight * 3 / 4, 0);
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, -this.torsoRadius - this.armsRadius, -this.armsHeight * 3 / 4, 0);
                 this.leftArmMatrix = rotateMat(this.leftArmMatrix, angle, axis);
-                this.leftArmMatrix = translateMat(this.leftArmMatrix, -this.torsoRadius - this.armsRadius, this.armsHeight * 3 / 4, 0);
+                this.leftArmMatrix = translateMat(this.leftArmMatrix, this.torsoRadius + this.armsRadius, this.armsHeight * 3 / 4, 0);
             }
             this.leftArmMatrix = multMat(oldLAMatrix, this.leftArmMatrix)
 
@@ -591,7 +597,7 @@ class Robot {
             }
             if (axis === 'z') {
                 let newAngle = this.rightArmZAngle + angle;
-                if (newAngle < this.armMinAngleZ ||  newAngle > this.armMaxAngleZ)
+                if (newAngle > this.armMinAngleZ ||  newAngle < -this.armMaxAngleZ)
                     return;
                 this.rightArmZAngle = newAngle;
             }
@@ -606,9 +612,9 @@ class Robot {
                 this.rightArmMatrix = translateMat(this.rightArmMatrix, 0, this.armsHeight * 3/4, 0);
             }
             else if (axis === "z") {
-                this.rightArmMatrix = translateMat(this.rightArmMatrix, -this.torsoRadius - this.armsRadius, -this.armsHeight * 3/4, 0);
+                this.rightArmMatrix = translateMat(this.rightArmMatrix, this.torsoRadius + this.armsRadius, -this.armsHeight * 3/4, 0);
                 this.rightArmMatrix = rotateMat(this.rightArmMatrix, angle, axis);
-                this.rightArmMatrix = translateMat(this.rightArmMatrix, this.torsoRadius + this.armsRadius, this.armsHeight * 3/4, 0);
+                this.rightArmMatrix = translateMat(this.rightArmMatrix, -this.torsoRadius - this.armsRadius, this.armsHeight * 3/4, 0);
             }
             this.rightArmMatrix = multMat(oldRAMatrix, this.rightArmMatrix)
 
@@ -832,6 +838,12 @@ class Robot {
 
       this.headMatrix = headRotMatrix;
 
+      // if (Math.abs(deltaX) < 1 && Math.abs(deltaZ) < 1) {
+      //     this.head.setMatrix(multMat(torsoMatrix, multMat(this.headMatrix, this.headInitialMatrix)));
+      //     return;
+      // }
+
+
       // On tourne le torse
       let newTorsoMatrix = rotateMat(idMat4(), angleY, "y");
       let torsoPosX = this.torsoMatrix.elements[12];
@@ -857,14 +869,14 @@ var components = [
     "Head",
     // Add parts names
     // TODO (check)
-    "LeftArm",
-    "LeftForearm",
-    "RightArm",
-    "RightForearm",
-    "LeftThigh",
-    "LeftLeg",
-    "RightThigh",
-    "RightLeg"
+    "Left Upper Arm",
+    "Left Forearm",
+    "Right Upper Arm",
+    "Right Forearm",
+    "Left Thigh",
+    "Left Lower Leg",
+    "Right Thigh",
+    "Right Lower Leg"
 ];
 var numberComponents = components.length;
 
@@ -920,41 +932,41 @@ function checkKeyboard() {
             // Add more cases
             // TODO (check)
 
-            case "LeftForearm":
+            case "Left Forearm":
                 robot.rotateForearm(true, -0.05)
                 break;
 
-            case "RightForearm":
+            case "Right Forearm":
                 robot.rotateForearm(false, -0.05)
                 break;
 
-            case "LeftArm":
+            case "Left Upper Arm":
                 robot.rotateArm(true, -0.05, 'x')
                 break;
 
-            case "RightArm":
+            case "Right Upper Arm":
                 robot.rotateArm(false, -0.05, 'x')
                 break;
 
-            case "LeftThigh":
+            case "Left Thigh":
                 robot.rotateThigh(true, -0.05);
                 robot.updateGroundTouch();
                 robot.moveAllWithTorso();
                 break;
 
-            case "RightThigh":
+            case "Right Thigh":
                 robot.rotateThigh(false, -0.05);
                 robot.updateGroundTouch();
                 robot.moveAllWithTorso();
                 break;
 
-            case "LeftLeg":
+            case "Left Lower Leg":
                 robot.rotateLeg(true, -0.05);
                 robot.updateGroundTouch();
                 robot.moveAllWithTorso();
                 break;
 
-            case "RightLeg":
+            case "Right Lower Leg":
                 robot.rotateLeg(false, -0.05);
                 robot.updateGroundTouch();
                 robot.moveAllWithTorso();
@@ -973,41 +985,41 @@ function checkKeyboard() {
       // Add more cases
       // TODO (check)
 
-        case "LeftForearm":
+        case "Left Forearm":
             robot.rotateForearm(true, 0.05);
             break;
 
-        case "RightForearm":
+        case "Right Forearm":
             robot.rotateForearm(false, 0.05);
             break;
 
-        case "LeftArm":
+        case "Left Upper Arm":
             robot.rotateArm(true, 0.05, 'x');
             break;
 
-        case "RightArm":
+        case "Right Upper Arm":
             robot.rotateArm(false, 0.05, 'x');
             break;
 
-        case "LeftThigh":
+        case "Left Thigh":
             robot.rotateThigh(true, 0.05);
             robot.updateGroundTouch();
             robot.moveAllWithTorso();
             break;
 
-        case "RightThigh":
+        case "Right Thigh":
             robot.rotateThigh(false, 0.05);
             robot.updateGroundTouch();
             robot.moveAllWithTorso();
             break;
 
-        case "LeftLeg":
+        case "Left Lower Leg":
             robot.rotateLeg(true, 0.05);
             robot.updateGroundTouch();
             robot.moveAllWithTorso();
             break;
 
-        case "RightLeg":
+        case "Right Lower Leg":
             robot.rotateLeg(false, 0.05);
             robot.updateGroundTouch();
             robot.moveAllWithTorso();
@@ -1027,11 +1039,11 @@ function checkKeyboard() {
       // Add more cases
       // TODO (check)
 
-        case "LeftArm":
+        case "Left Upper Arm":
             robot.rotateArm(true, -0.05, 'z')
             break;
 
-        case "RightArm":
+        case "Right Upper Arm":
             robot.rotateArm(false, -0.05, 'z')
             break;
     }
@@ -1049,11 +1061,11 @@ function checkKeyboard() {
       // Add more cases
       // TODO(check)
 
-        case "LeftArm":
+        case "Left Upper Arm":
             robot.rotateArm(true, 0.05, 'z')
             break;
 
-        case "RightArm":
+        case "Right Upper Arm":
             robot.rotateArm(false, 0.05, 'z')
             break;
     }
