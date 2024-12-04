@@ -7,6 +7,7 @@ The [three.js](https://threejs.org/) library is used for rendering the scene.
 This project was made with [Martin Medina](https://github.com/medinammartin3) for the [IFT3355](https://admission.umontreal.ca/cours-et-horaires/cours/ift-3355/) UdeM course.  
 
 ## Controls
+- Use `Left Click` to look around and `Right Click` to slide the camera. Use the `Mouse Wheel` to zoom.
 - Press `Q` or `E` to cycle through the limbs of the robot. By default, the torso is selected.  
 - If the torso is selected, you can make the robot walk around using `W`, `A`, `S` and `D`.  
 - If another limb is selected, you can rotate it around different axes using `W`, `A`, `S` and `D`.  
