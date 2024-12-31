@@ -1180,7 +1180,7 @@ function updateLookAtPosition() {
         robot.look_at(intersect.point);
     }
 }
-
+// Update the content and show the limb selection popup
 function updateLimbs(limbName) {
     let limbs = document.getElementById("limbs");
     limbs.style.opacity = "100%";
