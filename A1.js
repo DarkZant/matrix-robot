@@ -62,7 +62,7 @@ window.addEventListener('resize', resize);
 resize();
 
 // FLOOR WITH CHECKERBOARD
-var floorTexture = new THREE.ImageUtils.loadTexture('images/tile.jpg');
+var floorTexture = new THREE.ImageUtils.loadTexture('Images/tile.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.MirroredRepeatWrapping;
 floorTexture.repeat.set(4, 4);
 
