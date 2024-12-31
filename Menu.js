@@ -4,6 +4,7 @@ function showRightMenu(menuID, width) {
     menu.style.width = '' + width + 'vw';
     document.getElementById('menuicons').style.display = "none";
 }
+
 function hideRightMenu(menuID) {
     let menu = document.getElementById(menuID);
     document.getElementById('menuicons').style.display = "inline";
