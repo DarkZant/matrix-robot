@@ -3,12 +3,38 @@
     <meta charset="UTF-8">
     <title>Matrix Robot</title>
     <link rel="icon" href="images/RobotIcon.png">
+    <link rel="stylesheet" href="Menu.css">
+    <script src="Menu.js"></script>
     <style>
       body { margin: 0; } canvas { width: 100%;
       height: 100% }
     </style>
   </head>
   <body>
+    <div id="menuicons">
+      <div class="menuicon">
+        <div class="tt" id="setTT">Settings</div>
+        <div class="menuiconimg" id="setIcon" onclick="showRightMenu('info', 25)">
+          <img src="images/Info.png">
+        </div>
+      </div>
+      <br>
+      <div class="menuicon">
+        <div class="tt" id="contTT">Controls</div>
+        <div class="menuiconimg" id="contIcon" onclick="showRightMenu('controls', 25)">
+          <img src="images/Controls.png">
+        </div>
+      </div>
+    </div>
+    <div id="info" class="menu">
+      <div id="infoX" class="menuX" onclick="hideRightMenu('info')">×</div>
+      Hello blablabla
+    </div>
+    <div id="controls" class="menu">
+      <div id="contX" class="menuX" onclick="hideRightMenu('controls')">×</div>
+    </div>
+
+
     <script src="js/three.min.js"></script>
     <script src="js/OBJLoader.js"></script>
     <script src="js/SourceLoader.js"></script>

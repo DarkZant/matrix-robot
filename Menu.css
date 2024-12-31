@@ -1,0 +1,124 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #c0c0c0;
+    background-color: #1d1a14;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+}
+body img {
+    -webkit-user-drag: none;
+}
+
+/* Top right menu icons */
+#menuicons {
+    position: absolute;
+    display: inline;
+    text-align: right;
+    line-height: 0.812vh;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+}
+.menuicon {
+    display: flex;
+    column-gap: 7px;
+    justify-content: right;
+}
+.menuiconimg {
+    display: grid;
+    place-items: center;
+    width: 2.5vmax;
+    min-width: 20px;
+    aspect-ratio: 1;
+    border-style: solid;
+    border-color: #38352e;
+    border-width: 0.2vw;
+    border-radius: 3px;
+    padding: 0.4vmax;
+    cursor: pointer;
+}
+.menuiconimg img {
+    max-width: 100%;
+}
+.menuiconimg:hover {
+    background-color: #2c2c2c;
+}
+.tt {
+    margin: 0;
+    background-color: #38352e;
+    padding: 1.5vh 0.4vw;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    height: 50%;
+    align-self: center;
+    font-size: 2vmin;
+    transition: opacity 0.2s;
+}
+#setTT:has(+ #setIcon:hover),  #trackerTT:has(+ #trackerIcon:hover),
+#contTT:has(+ #contIcon:hover) {
+    visibility: visible;
+    opacity: 100%;
+}
+/* General menus */
+.menu {
+    position: absolute;
+    visibility: hidden;
+    height: 100dvh;
+    width: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: rgb(56, 53, 46, 0.85);
+    border-radius: 8px;
+    transition: width 0.1s;
+    overflow-y: scroll;
+}
+.menuX {
+    position: fixed;
+    top: 0;
+    right: 0.5vw;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    color: #757575;
+    margin: 0;
+    font: 1.4vmax Tahoma, Verdana, sans-serif;
+    font-weight: bolder;
+    cursor: pointer;
+    z-index: 1100;
+}
+.menuX:hover {
+    filter: brightness(75%);
+}
+@supports not selector(::-webkit-scrollbar) {
+    .menu {
+        scrollbar-width: thin;
+        scrollbar-color: #757575 rgb(56, 53, 46, 0.85);
+    }
+}
+@supports selector(::-webkit-scrollbar) {
+    .menu::-webkit-scrollbar {
+        width: 0.6vw;
+    }
+    .menu::-webkit-scrollbar-track {
+        background-color: transparent;
+        margin-block: 3.5vh;
+        border-radius: 4px;
+    }
+    .menu::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: #757575;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+    .menu::-webkit-scrollbar-thumb:hover {
+        background-color: #8a8a8a;
+    }
+}

@@ -8,11 +8,41 @@ var start = Date.now();
 // SETUP RENDERER AND SCENE
 var scene = new THREE.Scene();
 var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(0x000000); // white background colour
+// Skybox
+// Load the skybox textures
+var textureCube = THREE.ImageUtils.loadTextureCube([
+    'Images/Skybox/px.png', // +X
+    'Images/Skybox/nx.png', // -X
+    'Images/Skybox/py.png', // +Y
+    'Images/Skybox/ny.png', // -Y
+    'Images/Skybox/pz.png', // +Z
+    'Images/Skybox/nz.png'  // -Z
+]);
+
+// Set the cube texture as the background material
+var shader = THREE.ShaderLib['cube'];
+shader.uniforms['tCube'].value = textureCube;
+
+var skyboxMaterial = new THREE.ShaderMaterial({
+    fragmentShader: shader.fragmentShader,
+    vertexShader: shader.vertexShader,
+    uniforms: shader.uniforms,
+    depthWrite: false,
+    side: THREE.BackSide
+});
+
+// Create a cube for the skybox
+var skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+
+// Add the skybox to the scene
+scene.add(skybox);
+
+// renderer.setClearColor(0xFFFFFF); // white background colour
 document.body.appendChild(renderer.domElement);
 
 // SETUP CAMERA
-var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 1000); // view angle, aspect ratio, near, far
+var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 10500); // view angle, aspect ratio, near, far
 camera.position.set(10,5,10);
 camera.lookAt(scene.position);
 scene.add(camera);
@@ -37,7 +67,7 @@ floorTexture.wrapS = floorTexture.wrapT = THREE.MirroredRepeatWrapping;
 floorTexture.repeat.set(4, 4);
 
 var floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide });
-var floorGeometry = new THREE.PlaneBufferGeometry(15, 15);
+var floorGeometry = new THREE.PlaneBufferGeometry(50, 50);
 var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = Math.PI / 2;
 floor.position.y = 0.0;
@@ -434,8 +464,15 @@ class Robot {
 
 
     moveTorso(speed){
-        this.torsoMatrix = translateMat(this.torsoMatrix, speed * this.walkDirection.x, speed * this.walkDirection.y, speed * this.walkDirection.z);
+        let torsoMatrix = translateMat(this.torsoMatrix, speed * this.walkDirection.x, speed * this.walkDirection.y, speed * this.walkDirection.z);
 
+        let torsoX = torsoMatrix.elements[12];
+        let torsoZ = torsoMatrix.elements[14];
+        console.log(torsoX, torsoZ);
+        if (Math.abs(torsoX) > 25 || Math.abs(torsoZ) > 25)
+            return torsoX;
+
+        this.torsoMatrix = torsoMatrix;
         var matrix = multMat(this.torsoMatrix, this.torsoInitialMatrix);
         this.torso.setMatrix(matrix);
 
