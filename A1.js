@@ -11,12 +11,12 @@ var renderer = new THREE.WebGLRenderer();
 // Skybox
 // Load the skybox textures
 var textureCube = THREE.ImageUtils.loadTextureCube([
-    'Images/Skybox/px.png', // +X
-    'Images/Skybox/nx.png', // -X
-    'Images/Skybox/py.png', // +Y
-    'Images/Skybox/ny.png', // -Y
-    'Images/Skybox/pz.png', // +Z
-    'Images/Skybox/nz.png'  // -Z
+    'images/Skybox/px.png', // +X
+    'images/Skybox/nx.png', // -X
+    'images/Skybox/py.png', // +Y
+    'images/Skybox/ny.png', // -Y
+    'images/Skybox/pz.png', // +Z
+    'images/Skybox/nz.png'  // -Z
 ]);
 
 // Set the cube texture as the background material
@@ -62,7 +62,7 @@ window.addEventListener('resize', resize);
 resize();
 
 // FLOOR WITH CHECKERBOARD
-var floorTexture = new THREE.ImageUtils.loadTexture('Images/tile.jpg');
+var floorTexture = new THREE.ImageUtils.loadTexture('images/tile.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.MirroredRepeatWrapping;
 floorTexture.repeat.set(4, 4);
 
