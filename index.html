@@ -11,9 +11,13 @@
     </style>
   </head>
   <body>
+    <div id="limbs">
+      Selected:<br>
+      <span>Torso</span>
+    </div>
     <div id="menuicons">
       <div class="menuicon">
-        <div class="tt" id="setTT">Settings</div>
+        <div class="tt" id="setTT">Information</div>
         <div class="menuiconimg" id="setIcon" onclick="showRightMenu('info', 25)">
           <img src="images/Info.png">
         </div>
@@ -28,10 +32,35 @@
     </div>
     <div id="info" class="menu">
       <div id="infoX" class="menuX" onclick="hideRightMenu('info')">×</div>
-      Hello blablabla
+      <h1>Matrix Robot</h1>
+      <h3>
+        Made by:<br>
+        <a href="https://github.com/darkzant" target="_blank" rel="noopener noreferrer">Étienne Mitchell-Bouchard</a><br>
+        <a href="https://github.com/medinammartin3" target="_blank" rel="noopener noreferrer">Martin Medina</a>
+      </h3>
+      <br>
+      <p>
+        Robot scene animated purely by matrix calculations.<br><br>
+        All limbs of the robot are made with scaling matrices and are placed in the scene with translation matrices.<br>
+        <br>
+        We then animate the robot using rotation and translation matrices.<br><br>
+        The robot has a walk animation, can move each limb indepently and can look around.<br><br>
+        See
+        <span onclick="hideRightMenu('info'); setTimeout(function() {showRightMenu('controls', 25);}, 150)">Controls</span>
+        to learn how to control the robot.
+      </p>
     </div>
     <div id="controls" class="menu">
       <div id="contX" class="menuX" onclick="hideRightMenu('controls')">×</div>
+      <h1>Controls</h1>
+      <ul>
+        <li>Use <b>Left Click</b> to look around and <b>Right Click</b> to slide the camera. Use the <b>Mouse Wheel</b> to zoom.</li>
+        <li>Press <span>[ Q ]</span> or <span>[ E ]</span> to cycle through the limbs of the robot. By default, the torso is selected.</li>
+        <li>If the torso is selected, you can make the robot walk around using <span>[ W ]</span>, <span>[ A ]</span>, <span>[ S ]</span> and <span>[ D ]</span>.</li>
+        <li>If another limb is selected, you can rotate it around different axes using <span>[ W ]</span>, <span>[ A ]</span>, <span>[ S ]</span> and <span>[ D ]</span>.</li>
+        <li> Press <span>[ F ]</span> and point at an object in the scene with your mouse to make a point appear, and the robot will rotate and look at the point.</li>
+        <li>You can make the robot follow the point around if you both make the robot walk forward and point at an object at the same time.</li>
+      </ul>
     </div>
 
 

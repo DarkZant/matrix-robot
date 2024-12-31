@@ -122,3 +122,61 @@ body img {
         background-color: #8a8a8a;
     }
 }
+/* Information Menu */
+#info, #controls {
+    text-align: center;
+}
+#info a {
+    color: #c0c0c0;
+}
+#info a:hover {
+    color: #747474;
+}
+#info p, #info h3 {
+    line-height: 1.75;
+}
+#info p {
+    font-size: 1.1em;
+    padding: 0 1.5vw;
+}
+#info span {
+    background-color: #1d1a14;
+    padding: 0.25em 0.35em;
+    border-radius: 3px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+#info span:hover {
+    color: #747474;
+}
+/* Controls Menu */
+#controls h1 {
+    padding-bottom: 3vh;
+}
+#controls li {
+    font-size: 1.2em;
+    padding: 0 1.5vw 3vh 1.5vw;
+}
+#controls span {
+    font-weight: bold;
+    white-space: nowrap;
+}
+/* Limbs Popup*/
+#limbs {
+    position: absolute;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 20dvw;
+    height: 10dvh;
+    left: 40%;
+    top: 5%;
+    background-color: rgb(56, 53, 46, 0.85);
+    border-radius: 8px;
+    line-height: 1.5;
+    font-size: 1.5em;
+    transition: opacity 0.2s;
+    opacity: 0;
+}

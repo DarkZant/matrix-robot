@@ -926,9 +926,16 @@ document.addEventListener('mousemove', onMouseMove, false);
 
 var isRightButtonDown = false;
 
+let lastPressedTimeLimb = 0;
+const limbCooldown = 1000;
+
 function checkKeyboard() {
+    let currentTime = Date.now();
+    let timeDiffLimbs = currentTime - lastPressedTimeLimb;
+
   // Next element
-  if (keyboard.pressed("e")){
+  if (keyboard.pressed("e") && timeDiffLimbs > limbCooldown) {
+      lastPressedTimeLimb = currentTime;
     selectedRobotComponent = selectedRobotComponent + 1;
 
     if (selectedRobotComponent < 0){
@@ -939,12 +946,13 @@ function checkKeyboard() {
       selectedRobotComponent = 0;
     }
 
-    window.alert(components[selectedRobotComponent] + " selected");
+    updateLimbs(components[selectedRobotComponent]);
   }
 
   // Previous element
-  if (keyboard.pressed("q")){
-    selectedRobotComponent = selectedRobotComponent - 1;
+  if (keyboard.pressed("q") && timeDiffLimbs > limbCooldown){
+      lastPressedTimeLimb = currentTime;
+      selectedRobotComponent = selectedRobotComponent - 1;
 
     if (selectedRobotComponent < 0){
       selectedRobotComponent = numberComponents - 1;
@@ -954,7 +962,7 @@ function checkKeyboard() {
       selectedRobotComponent = 0;
     }
 
-    window.alert(components[selectedRobotComponent] + " selected");
+    updateLimbs(components[selectedRobotComponent]);
   }
 
   // UP
@@ -1171,6 +1179,15 @@ function updateLookAtPosition() {
         sphere.position.copy(intersect.point);
         robot.look_at(intersect.point);
     }
+}
+
+function updateLimbs(limbName) {
+    let limbs = document.getElementById("limbs");
+    limbs.style.opacity = "100%";
+    limbs.children[1].innerHTML = limbName;
+    setTimeout(function() {
+        limbs.style.opacity = "0%";
+    }, 2000);
 }
 
 // SETUP UPDATE CALL-BACK
